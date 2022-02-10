@@ -32,15 +32,16 @@ rule:
   | r=new_rule { r }
 
 old_rule:
-  flags? name=ident ATTRIBUTE* params=parameters(ident) COLON
+  flags=flags name=ident ATTRIBUTE* params=parameters(ident) COLON
   optional_bar groups=separated_nonempty_list(BAR, group) SEMICOLON*
-  { { name; params; groups } }
+  { { flags ; name; params; groups } }
 
 flags:
-  | PUBLIC        { () }
-  | INLINE        { () }
-  | PUBLIC INLINE { () }
-  | INLINE PUBLIC { () }
+  /* expsilon */  { [] }
+  | PUBLIC        { [ Public ] }
+  | INLINE        { [ Inline ] }
+  | PUBLIC INLINE { [ Public ; Inline ] }
+  | INLINE PUBLIC { [ Inline ; Public ] }
 
 optional_bar:
   /* epsilon */ %prec no_optional_bar
@@ -107,9 +108,9 @@ lax_actual:
 
 
 let new_rule :=
-  PUBLIC?; LET; name=LID; ATTRIBUTE*; params=parameters(ident);
+  pub=PUBLIC?; LET; name=LID; ATTRIBUTE*; params=parameters(ident);
   binder; es=expression;
-  { { name; params; groups = [es] } }
+  { { flags = if pub = None then [] else [ Public ]; name; params; groups = [es] } }
 
 let binder == COLONEQ | EQEQ
 

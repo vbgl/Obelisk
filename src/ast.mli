@@ -5,6 +5,7 @@ type spec = rule list
 
 (** The rules.  *)
 and rule = {
+  flags: flag list;             (** Set of flags attached to the rule. *)
   name: string;                 (** The left-hand side of the rule.  *)
   params: string list;          (** The possible list of parameters.  *)
   groups: group list            (** The right-hand side of the rule.  *)
@@ -27,3 +28,6 @@ and modifier =
   | Opt                         (** optionnal *)
   | Plus                        (** non-empty list  *)
   | Star                        (** list *)
+
+(** The flags. *)
+and flag = Public | Inline
